@@ -40,13 +40,25 @@
 
 <script>
     let words = [];
-    
+
     async function loadData() {
-        // GitHub'a yükleyeceğin words.json dosyasını okur
-        const response = await fetch('words.json');
-        words = await response.json();
+    // Oxford 3000 listesini içeren güvenilir bir açık kaynak JSON adresi
+    const repoUrl = 'https://raw.githubusercontent.com/fawad-shafi/oxford-3000/master/oxford-3000.json';
+    try {
+        const response = await fetch(repoUrl);
+        const rawData = await response.json();
+        // Veriyi kendi formatımıza çeviriyoruz
+        words = rawData.map(item => ({
+            w: item.word,
+            p: item.phonetic || '',
+            m: item.definition || 'Anlamı yüklenemedi',
+            e: item.example || 'Örnek cümle bulunamadı'
+        }));
         render();
+    } catch (e) {
+        console.error("Veri çekilemedi:", e);
     }
+}
 
     function render() {
         if (words.length === 0) {
