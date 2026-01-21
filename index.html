@@ -3,157 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oxford 3000 Ezber Kartları</title>
+    <title>Oxford 3000 Pro</title>
     <style>
-        /* Modern ve Karanlık Tema */
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: #090909; 
-            color: #ffffff; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            margin: 0; 
-            touch-action: manipulation;
-        }
-        #app { text-align: center; width: 100%; max-width: 450px; padding: 20px; }
-        
-        /* Kart Tasarımı */
-        .card { 
-            background: #1a1a1a; 
-            padding: 50px 30px; 
-            border-radius: 25px; 
-            border: 1px solid #333; 
-            min-height: 300px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center;
-            transition: 0.3s;
-        }
-        .card:active { transform: scale(0.98); background: #222; }
-
-        .word { font-size: 3rem; font-weight: bold; color: #00ff88; margin-bottom: 5px; }
-        .phonetic { color: #888; font-size: 1.2rem; margin-bottom: 20px; font-family: monospace; }
-        .meaning { font-size: 1.6rem; color: #fff; margin-bottom: 25px; }
-        .example { font-size: 1.1rem; color: #bbb; line-height: 1.5; font-style: italic; border-top: 1px solid #333; padding-top: 20px; }
-
-        /* Butonlar */
-        .buttons { display: flex; gap: 20px; margin-top: 40px; }
-        button { 
-            flex: 1; 
-            height: 90px; 
-            border: none; 
-            border-radius: 20px; 
-            font-size: 2.5rem; 
-            cursor: pointer; 
-            transition: 0.2s; 
-            color: white; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-        }
-        .btn-no { background: #ff4d4d; box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3); }
-        .btn-yes { background: #00c851; box-shadow: 0 4px 15px rgba(0, 200, 81, 0.3); }
-        button:hover { opacity: 0.9; }
-        button:active { transform: translateY(5px); }
-
-        .counter { margin-top: 25px; color: #444; font-size: 1rem; font-weight: bold; }
-        .loader { font-size: 1.5rem; color: #00ff88; }
+        body { font-family: sans-serif; background: #000; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        #app { text-align: center; width: 100%; max-width: 400px; padding: 20px; }
+        .card { background: #111; padding: 40px 20px; border-radius: 20px; border: 2px solid #333; min-height: 250px; cursor: pointer; position: relative; }
+        .word { font-size: 2.8rem; font-weight: bold; color: #00ff88; margin-bottom: 5px; }
+        .phonetic { color: #888; font-size: 1.1rem; margin-bottom: 15px; }
+        .meaning { font-size: 1.5rem; color: #fff; margin-bottom: 20px; }
+        .example { font-size: 1rem; color: #aaa; line-height: 1.4; border-top: 1px solid #222; padding-top: 15px; }
+        .buttons { display: flex; gap: 20px; margin-top: 30px; }
+        button { flex: 1; height: 80px; border: none; border-radius: 15px; font-size: 2rem; cursor: pointer; color: white; }
+        .btn-no { background: #ff4444; }
+        .btn-yes { background: #00c851; }
+        .counter { margin-top: 20px; color: #555; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
 <div id="app">
-    <div id="main-content" style="display:none;">
-        <div class="card" onclick="speakWord()">
-            <div id="word" class="word"></div>
-            <div id="phonetic" class="phonetic"></div>
-            <div id="meaning" class="meaning"></div>
-            <div id="example" class="example"></div>
-            <div style="margin-top:20px; font-size:0.8rem; color:#555;">🔊 Dinlemek için tıkla</div>
-        </div>
-        
-        <div class="buttons">
-            <button class="btn-no" onclick="handleAction(false)">✖</button>
-            <button class="btn-yes" onclick="handleAction(true)">✔</button>
-        </div>
-        
-        <div id="counter" class="counter">Yükleniyor...</div>
+    <div class="card" onclick="speakWord()">
+        <div id="word" class="word">Yükleniyor...</div>
+        <div id="phonetic" class="phonetic"></div>
+        <div id="meaning" class="meaning"></div>
+        <div id="example" class="example"></div>
+        <div style="font-size: 0.7rem; color: #444; margin-top: 10px;">🔊 DINLEMEK İÇIN TIKLA</div>
     </div>
-    <div id="loading" class="loader">Oxford 3000 Listesi Hazırlanıyor...</div>
+    <div class="buttons">
+        <button class="btn-no" onclick="handleAction(false)">✖</button>
+        <button class="btn-yes" onclick="handleAction(true)">✔</button>
+    </div>
+    <div id="counter" class="counter"></div>
 </div>
 
 <script>
-    let words = [];
+    // BURAYA KELIMELERI EKLIYORUZ (Örnek başlangıç seti)
+    // 3000 kelimenin tamamını bu listenin içine virgülle ayırarak ekleyebilirsin
+    let words = [
+        { w: "Abandon", p: "/əˈbændən/", m: "Terk etmek", e: "They had to abandon the car." },
+        { w: "Ability", p: "/əˈbɪlɪti/", m: "Yetenek", e: "She has a great ability to learn." },
+        { w: "Abolish", p: "/əˈbɒlɪʃ/", m: "Kaldırmak (Yasa vb.)", e: "The tax was abolished last year." },
+        { w: "Abstract", p: "/ˈæbstrækt/", m: "Soyut", e: "Truth and honor are abstract concepts." },
+        { w: "Academic", p: "/ˌækəˈdemɪk/", m: "Akademik", e: "He had a brilliant academic career." },
+        { w: "Accompany", p: "/əˈkʌmpəni/", m: "Eşlik etmek", e: "I will accompany you to the door." }
+        // İstediğin kadar kelimeyi bu formatta aşağıya eklemeye devam edebilirsin
+    ];
 
-    // Veriyi internet üzerinden çekiyoruz (Oxford 3000 JSON)
-    async function initApp() {
-        try {
-            const response = await fetch('https://raw.githubusercontent.com/fawad-shafi/oxford-3000/master/oxford-3000.json');
-            const data = await response.json();
-            
-            // Veriyi istediğimiz formata sokuyoruz
-            words = data.map(item => ({
-                w: item.word,
-                p: item.phonetic || '',
-                m: item.definition,
-                e: item.example
-            }));
-
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
-            renderCard();
-        } catch (error) {
-            document.getElementById('loading').innerText = "Hata: İnternet bağlantını kontrol et.";
-        }
-    }
-
-    function renderCard() {
+    function render() {
         if (words.length === 0) {
-            document.getElementById('app').innerHTML = "<h1>Tebrikler! Hepsini bitirdin. 🎉</h1>";
+            document.getElementById('app').innerHTML = "<h1>Hepsini bitirdin! 🎉</h1>";
             return;
         }
-
-        const current = words[0];
-        document.getElementById('word').innerText = current.w;
-        document.getElementById('phonetic').innerText = current.p;
-        document.getElementById('meaning').innerText = current.m;
-        document.getElementById('example').innerText = current.e ? `"${current.e}"` : "Örnek cümle mevcut değil.";
-        document.getElementById('counter').innerText = `KALAN KELİME: ${words.length}`;
-        
+        const item = words[0];
+        document.getElementById('word').innerText = item.w;
+        document.getElementById('phonetic').innerText = item.p;
+        document.getElementById('meaning').innerText = item.m;
+        document.getElementById('example').innerText = item.e;
+        document.getElementById('counter').innerText = `KALAN: ${words.length}`;
         speakWord();
     }
 
-    // Sesli Okunuş Fonksiyonu
-    function speakWord() {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel(); // Önceki okumayı durdur
-            const msg = new SpeechSynthesisUtterance();
-            msg.text = words[0].w;
-            msg.lang = 'en-US';
-            msg.rate = 0.9; // Biraz yavaş ve net okuma
-            window.speechSynthesis.speak(msg);
-        }
-    }
-
-    // Buton Mantığı
     function handleAction(isKnown) {
         if (isKnown) {
-            // Biliyorsam: Listeden kalıcı olarak çıkar
-            words.shift();
+            words.shift(); // Tik: Sil
         } else {
-            // Bilmiyorsam: Baştan al sona ekle (Döngü)
-            const unknownWord = words.shift();
-            words.push(unknownWord);
+            const current = words.shift(); // Çarpı: Sona at
+            words.push(current);
         }
-        renderCard();
+        render();
     }
 
-    // Uygulamayı Başlat
-    initApp();
-</script>
+    function speakWord() {
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(words[0].w);
+        msg.lang = 'en-US';
+        window.speechSynthesis.speak(msg);
+    }
 
+    // Uygulamayı başlat
+    render();
+</script>
 </body>
 </html>
