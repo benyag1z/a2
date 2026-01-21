@@ -1,35 +1,83 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>en sevdiğime mesaj</title>
-  <style>
-    body {
-      background-color: #ffffff;
-      color: #000000;
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 20px;
-      line-height: 1.8;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      padding: 20px;
-      text-align: center;
-    }
-    .message {
-      max-width: 600px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oxford 3000 Kartları</title>
+    <style>
+        body { font-family: sans-serif; background: #121212; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        #app { text-align: center; width: 90%; max-width: 400px; }
+        .card { background: #1e1e1e; padding: 30px; border-radius: 10px; border: 2px solid #333; min-height: 250px; display: flex; flex-direction: column; justify-content: center; }
+        .word { font-size: 2rem; font-weight: bold; margin-bottom: 5px; color: #bb86fc; }
+        .phonetic { color: #03dac6; font-family: monospace; margin-bottom: 15px; }
+        .meaning { font-size: 1.2rem; margin-bottom: 20px; }
+        .example { font-size: 0.9rem; color: #aaa; font-style: italic; border-top: 1px solid #333; pt: 10px; }
+        .buttons { margin-top: 20px; display: flex; gap: 20px; justify-content: center; }
+        button { flex: 1; padding: 20px; font-size: 1.5rem; border: none; border-radius: 5px; cursor: pointer; color: white; }
+        .btn-no { background: #cf6679; } /* Çarpı */
+        .btn-yes { background: #03dac6; color: #000; } /* Tik */
+        .stats { margin-top: 10px; font-size: 0.8rem; color: #666; }
+    </style>
 </head>
 <body>
-  <div class="message">
-    Nazlı seni rahatsız ediyorsam özür dilerim buradan ulaşmak zorunda kaldım bana düşün dediğin şeyi düşündüm gerçekten hiç sıkıntı değil ben sana her zamanki gibi güveniyorum güvenicem de umarım mesajım sana ulaşır.  
-    İstanbul’a geldiğin zaman benle buluşmanı çok isterim.  
-    yazmanı bekleyeceğim o zaman kadar sağlıcakla kal, seni seviyorum. Seni özledim. Arkadaşım sana ilettikten sonra sohbet geçmişini silecek ve numaranı kaydetmeden gönderecek tekrardan böyle bir yolla ulaştığım veya ulaşmaya çalıştığım için üzgünüm.
-  </div>
+
+<div id="app">
+    <div class="card" id="card">
+        <div class="word" id="word">Yükleniyor...</div>
+        <div class="phonetic" id="phonetic"></div>
+        <div class="meaning" id="meaning"></div>
+        <div class="example" id="example"></div>
+    </div>
+    <div class="buttons">
+        <button class="btn-no" onclick="handleButton(false)">✖</button>
+        <button class="btn-yes" onclick="handleButton(true)">✔</button>
+    </div>
+    <div class="stats" id="stats">Kalan: -</div>
+</div>
+
+<script>
+    let allWords = [];
+    let currentIndex = 0;
+
+    // Oxford 3000 verisini çekiyoruz (Örnek olarak buraya bir kaç tane ekledim, 
+    // gerçek 3000'lik liste GitHub'da ayrı bir JSON olarak tutulabilir)
+    async function loadWords() {
+        // Not: 3000 kelimeyi buradaki array içine veya ayrı bir words.json dosyasına koyabilirsin
+        allWords = [
+            { w: "Abandon", p: "/əˈbændən/", m: "Terk etmek", e: "They had to abandon the car." },
+            { w: "Ability", p: "/əˈbɪlɪti/", m: "Yetenek", e: "He has the ability to learn quickly." },
+            { w: "Above", p: "/əˈbʌv/", m: "Üzerinde", e: "The birds flew above the trees." }
+            // Buraya 3000 kelime gelecek
+        ];
+        renderCard();
+    }
+
+    function renderCard() {
+        if (allWords.length === 0) {
+            document.getElementById('card').innerHTML = "<h1>Bitti!</h1>";
+            return;
+        }
+        const item = allWords[0];
+        document.getElementById('word').innerText = item.w;
+        document.getElementById('phonetic').innerText = item.p;
+        document.getElementById('meaning').innerText = item.m;
+        document.getElementById('example').innerText = item.e;
+        document.getElementById('stats').innerText = `Kalan Kelime: ${allWords.length}`;
+    }
+
+    function handleButton(known) {
+        if (known) {
+            // Tik: Listeden tamamen çıkar
+            allWords.shift();
+        } else {
+            // Çarpı: Al sona at (tekrar gelmesi için)
+            const current = allWords.shift();
+            allWords.push(current);
+        }
+        renderCard();
+    }
+
+    loadWords();
+</script>
 </body>
 </html>
-
