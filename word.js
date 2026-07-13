@@ -1061,3 +1061,4 @@ const kelimeHavuzu = [
     { en: "Jam", tr: "Reçel", level: "A2" }, // [cite: 2393]
     { en: "Jazz", tr: "Caz", level: "A2" }, // [cite: 2393]
     { en: "Jewellery", tr: "Mücevherat", level: "A2" }, //
+];
