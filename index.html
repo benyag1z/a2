@@ -9,15 +9,16 @@
 <body>
 
 <div class="container">
-    <div class="header">
+    <div class="header" style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
         <button id="btn-normal" class="mode-btn active" onclick="setMode('normal')">Normal Test</button>
+        
+        <div style="font-size: 1rem; font-weight: bold; color: var(--success); background: #0f172a; padding: 8px 16px; border-radius: 8px; border: 1px solid #334155;">
+            ✔ Doğru: <span id="correct-count">0</span>
+        </div>
+
         <button id="btn-wrong" class="mode-btn wrong-mode" onclick="setMode('wrong')">
             Yanlış Yapılanlar (<span id="wrong-count">0</span>)
         </button>
-     </div>
-        <div style="font-size: 1.1rem; font-weight: bold; color: var(--success); background: #0f172a; padding: 8px 16px; border-radius: 8px; border: 1px solid #334155;">
-            ✔ Doğru Sayısı: <span id="correct-count">0</span>
-        </div>
     </div>
 
     <div id="game-area">
@@ -27,7 +28,8 @@
         </div>
 
         <div class="options-grid" id="options-container">
-            </div>
+            <!-- Seçenekler script.js tarafından buraya dinamik eklenecek -->
+        </div>
 
         <div class="feedback-area">
             <div id="status-text" class="status-text"></div>
