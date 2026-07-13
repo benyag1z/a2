@@ -25,24 +25,30 @@ function setMode(mod) {
 }
 
 function yeniSoruUret() {
+    // Durumları ve butonları sıfırla
     document.getElementById('status-text').innerText = "";
     document.getElementById('next-btn').style.display = "none";
+    
+    // Ezberledim butonu varsa gizle
+    const deleteBtn = document.getElementById('delete-btn');
+    if (deleteBtn) deleteBtn.style.display = "none";
 
     let havuz = aktifMod === 'normal' ? kelimeHavuzu : yalnisKelimeler;
 
     if (havuz.length === 0 && aktifMod === 'wrong') {
+        alert("Harika! Yanlış listendeki tüm kelimeleri ezberledin!");
         setMode('normal');
         return;
     }
 
-    // Rastgele kelime seçimi (Sonsuz Döngü)
+    // Rastgele bir kelime seç (Sonsuz Döngü)
     const rastgeleIndex = Math.floor(Math.random() * havuz.length);
     siradakiKelime = havuz[rastgeleIndex];
 
     document.getElementById('word-display').innerText = siradakiKelime.en;
     document.getElementById('level-badge').innerText = siradakiKelime.level || "A1-A2";
 
-    // Dinamik Şık Üretimi: Doğru cevap haricinde havuzdan 3 rastgele kelime bul
+    // 3 Tane rastgele YANLIŞ şık bul
     let digerKelimeler = kelimeHavuzu.filter(k => k.en !== siradakiKelime.en);
     digerKelimeler = karistir(digerKelimeler).slice(0, 3);
 
@@ -50,7 +56,7 @@ function yeniSoruUret() {
     secenekler = [siradakiKelime, ...digerKelimeler];
     secenekler = karistir(secenekler);
 
-    // Butonları ekrana bas
+    // Şıkları ekrana bas
     const container = document.getElementById('options-container');
     container.innerHTML = "";
     
@@ -69,17 +75,14 @@ function cevabiKontrolEt(secilenBtn, secilenKelime) {
 
     const statusText = document.getElementById('status-text');
     const nextBtn = document.getElementById('next-btn');
+    const deleteBtn = document.getElementById('delete-btn');
 
     if (secilenKelime.en === siradakiKelime.en) {
         secilenBtn.classList.add('correct');
         statusText.innerText = "🎉 Doğru!";
         statusText.style.color = "var(--success)";
-
-        if (aktifMod === 'wrong') {
-            yalnisKelimeler = yalnisKelimeler.filter(k => k.en !== siradakiKelime.en);
-            localStorage.setItem('yalnisKelimeler', JSON.stringify(yalnisKelimeler));
-            guncelleYanlisSayisi();
-        }
+        
+        // DİKKAT: Artık doğru bilinse bile otomatik silmiyoruz!
     } else {
         secilenBtn.classList.add('wrong');
         statusText.innerText = "❌ Yanlış! Doğrusu: " + siradakiKelime.tr;
@@ -91,6 +94,7 @@ function cevabiKontrolEt(secilenBtn, secilenKelime) {
             }
         });
 
+        // Yanlış kelimelere ekle (Eğer zaten yoksa)
         if (!yalnisKelimeler.some(k => k.en === siradakiKelime.en)) {
             yalnisKelimeler.push(siradakiKelime);
             localStorage.setItem('yalnisKelimeler', JSON.stringify(yalnisKelimeler));
@@ -99,13 +103,28 @@ function cevabiKontrolEt(secilenBtn, secilenKelime) {
     }
 
     nextBtn.style.display = "inline-block";
+
+    // Eğer yanlış modundaysak, "Ezberledim" butonunu görünür yap
+    if (aktifMod === 'wrong' && deleteBtn) {
+        deleteBtn.style.display = "inline-block";
+    }
+}
+
+// Kelimeyi manuel olarak listeden çıkarma fonksiyonu
+function kelimeyiEzberledim() {
+    yalnisKelimeler = yalnisKelimeler.filter(k => k.en !== siradakiKelime.en);
+    localStorage.setItem('yalnisKelimeler', JSON.stringify(yalnisKelimeler));
+    guncelleYanlisSayisi();
+    
+    // Silme işleminden sonra hemen yeni soruya geç
+    yeniSoruUret();
 }
 
 function nextQuestion() {
     yeniSoruUret();
 }
 
-// Fisher-Yates Dizi Karıştırma Algoritması
+// Dizi karıştırma algoritması (Fisher-Yates)
 function karistir(array) {
     let currentIndex = array.length, randomIndex;
     while (currentIndex !== 0) {
